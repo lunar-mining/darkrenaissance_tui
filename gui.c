@@ -60,13 +60,13 @@ int main(int argc, char* argv[])
                 else
                     --highlight;
                 break;
-            case KEY_DOWN;
+            case KEY_DOWN:
                 if(highlight== n_choices)
                     highlight = 1;
                 else
                     ++highlight;
                 break;
-            case 10;
+            case 10:
                 choice = highlight;
                 break;
             default:
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
         }
         print_menu(menu_window, highlight);
         if(choice != 0)
-            break
+            break;
     }
     clrtoeol();
     refresh();
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void print_menu(WINDOW *menu_window, int highlights)
+void print_menu(WINDOW *menu_window, int highlight)
 {
     int x, y, i;
     x = 2;
