@@ -4,6 +4,25 @@
 #define WIDTH 30
 #define HEIGHT 10
 
+/*enum class menu_select
+{
+    start = 0;
+    send,
+    recieve,
+    balance,
+    history,
+    quit
+};
+
+class selector
+{
+public:
+    selector();
+    {
+    }  */
+
+
+
 int startx = 0;
 int starty = 0;
 char *choices[] = 
@@ -38,7 +57,7 @@ int main(int argc, char* argv[])
 
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
     printw("DARK RENAISSANCE WALLET");
-    mvprintw(10, 20, "DARK RENAISSANCE WALLET");
+   // mvprintw(10, 20, "DARK RENAISSANCE WALLET");
     mvchgat(0, 0, -1, A_BLINK, 1, NULL);
 
     //refresh();
