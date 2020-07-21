@@ -22,7 +22,7 @@ void print_menu(WINDOW *menu_window, int highlight);
 void init_wins(WINDOW **wins, int n);
 void win_show(WINDOW *win, char *label, int label_color);
 void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color);
-void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top);
+//void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top);
 
 int main()
 {
@@ -51,34 +51,67 @@ int main()
 
     print_menu(menu_window, highlight); 
 
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+    init_pair(2, COLOR_GREEN, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_BLACK);
+    init_pair(4, COLOR_CYAN, COLOR_BLACK);
+      
+    init_wins(my_wins, 3);
+
+    my_panels[0] = new_panel(my_wins[0]);
+    my_panels[1] = new_panel(my_wins[1]);
+    my_panels[2] = new_panel(my_wins[2]);
+
+    set_panel_userptr(my_panels[0], my_panels[1]);
+    set_panel_userptr(my_panels[1], my_panels[2]);
+    set_panel_userptr(my_panels[2], my_panels[0]);
+
+    update_panels();
+
+    attron(COLOR_PAIR(4));
+    attroff(COLOR_PAIR(4));
+
+    doupdate();
+    top = my_panels[2];
+
     while(1)
     {
         c = wgetch(menu_window);
         switch(c)
         {
             case KEY_UP:
+                top = (PANEL *)panel_userptr(top);
+                top_panel(top);
                 if(highlight == 1)
                     highlight = n_choices;
                 else
                     --highlight;
                 break;
             case KEY_DOWN:
+                top = (PANEL *)panel_userptr(top);
+                top_panel(top);
                 if(highlight== n_choices)
                     highlight = 1;
                 else
                     ++highlight;
                 break;
             case 10:
+                top = (PANEL *)panel_userptr(top);
+                top_panel(top);
                 choice = highlight;
                 break;
             case 9:
-                activate_panels(my_wins, my_panels, top);
+                top = (PANEL *)panel_userptr(top);
+                top_panel(top);
+                //activate_panels(my_wins, my_panels, top);
             default:
                 mvprintw(24, 0, "oh hi");
                 refresh();
                 break;
         }
         // ++panel
+        update_panels();
+        doupdate(); 
         print_menu(menu_window, highlight);
         if(choice != 0)
             break;
@@ -164,7 +197,7 @@ void print_menu(WINDOW *menu_window, int highlight)
     wrefresh(menu_window);
 }
 
-void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top)
+/*void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top)
 {
     int ch;
      
@@ -203,5 +236,5 @@ void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top)
         update_panels();
         doupdate(); 
     }
-    refresh();
-}
+    //refresh();
+}*/
