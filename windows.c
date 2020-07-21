@@ -78,6 +78,7 @@ int main()
                 refresh();
                 break;
         }
+        // ++panel
         print_menu(menu_window, highlight);
         if(choice != 0)
             break;

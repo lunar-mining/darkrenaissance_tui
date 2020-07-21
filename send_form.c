@@ -13,24 +13,25 @@ int main()
     keypad(stdscr, TRUE);
 
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
-    init_pair(2, COLOR_CYAN, COLOR_BLACK);
     field[0] = new_field(1, 35, 4, 18, 0, 0);
     field[1] = new_field(1, 35, 6, 18, 0, 0);
     field[2] = new_field(1, 35, 8, 18, 0, 0);
     field[3] = NULL;
 
     set_field_fore(field[0], COLOR_PAIR(1));
-    set_field_back(field[0], COLOR_PAIR(2));
+    //set_field_back(field[0], COLOR_PAIR(2));
 
     set_field_fore(field[1], COLOR_PAIR(1));
-    set_field_fore(field[1], COLOR_PAIR(2));
+    //set_field_fore(field[1], COLOR_PAIR(2));
 
     set_field_fore(field[2], COLOR_PAIR(1));
-    set_field_fore(field[2], COLOR_PAIR(2));
+    //set_field_fore(field[2], COLOR_PAIR(2));
 
     field_opts_off(field[0], O_AUTOSKIP);
     field_opts_off(field[1], O_AUTOSKIP);
     field_opts_off(field[2], O_AUTOSKIP);
+
+    field_opts_on(field[0], O_EDIT);
 
     set_field_back(field[0], A_UNDERLINE);
     set_field_back(field[1], A_UNDERLINE);

@@ -2,18 +2,26 @@
 #include <string.h>
 #include <stdlib.h>
 
+// TODO: white pattern flashing, white text 
+
 void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string);
 
 int main(int argc, char *argv[])
 {
+    int row,col;
+    char welcome[]="DARK RENAISSANCE WALLET <3";
     initscr();/* Start curses mode            */
     start_color();/* Start color                  */
 
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
+
+    attron(COLOR_PAIR(1));
     print_in_middle(stdscr, LINES / 2, 0, 0, "PRESS ENTER");
 
-    mvprintw(2, 20, "D A R K  R E N A I S S A N C E  W A L L E T");
-
+    getmaxyx(stdscr,row, col);
+    mvprintw(0, (col-strlen(welcome)/2), welcome);
+    //mvprintw(2, 20, "DARK RENAISSANCE WALLET");
+    attroff(COLOR_PAIR(1));
     getch();
     endwin();
 }
@@ -38,31 +46,3 @@ void print_in_middle(WINDOW *win, int starty, int startx, int width, char *strin
     mvchgat(y, x, -1, A_BLINK, 1, NULL);
     refresh();
 }       
-
-/*int main(int argc, char* argv[])
-{
-    WINDOW *welcome_window;
-
-    welcome_window = newwin(10, 70, 4, 4);
-
-    initscr();
-    mvprintw(welcome_window, 0, 0, "WELCOME TO THE WALLET");
-    clear();
-    noecho();
-    cbreak(); // line buffering disabled
-
-    keypad(welcome_window, TRUE);
-    start_color();
-
-    init_pair(1, COLOR_CYAN, COLOR_BLACK);
-    mvprintw(10, 20, "ENTER");
-    mvchgat(0, 0, -1, A_BLINK, 1, NULL);
-
-    box(welcome_window, 0, 0);
-    refresh();
-
-    clrtoeol();
-    refresh();
-    endwin();
-    return 0;      
-}*/
