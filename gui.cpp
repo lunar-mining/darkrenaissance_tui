@@ -6,6 +6,12 @@
 #define NLINES 18
 #define NCOLS 40
 
+// TODO: refactor as ENUM
+// classes for each enum variable i.e. class send{} etc
+// refactor into object orientated style i.e. isolate objects into classes
+// Object-orientated design: combining data and its operation into context-bound
+// entity (class, struct)
+
 int startx = 0;
 int starty = 0;
 const char *choices[] = 
@@ -22,14 +28,13 @@ void print_menu(WINDOW *menu_window, int highlight);
 void init_wins(WINDOW **wins, int n);
 void win_show(WINDOW *win, char *label, int label_color);
 void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color);
-//void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top);
+//void activate_panels(WINDOW *page_window[3], PANEL *pages[3], PANEL *top);
 
 int main()
 {
     WINDOW *menu_window;
-
-    WINDOW *my_wins[3];
-    PANEL  *my_panels[3];
+    WINDOW *page_window[5];
+    PANEL  *pages[5];
     PANEL  *top;
     int ch;
 
@@ -55,24 +60,29 @@ int main()
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     init_pair(3, COLOR_BLUE, COLOR_BLACK);
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
+    init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
       
-    init_wins(my_wins, 3);
+    init_wins(page_window, 5);
 
-    my_panels[0] = new_panel(my_wins[0]);
-    my_panels[1] = new_panel(my_wins[1]);
-    my_panels[2] = new_panel(my_wins[2]);
+    pages[0] = new_panel(page_window[0]);
+    pages[1] = new_panel(page_window[1]);
+    pages[2] = new_panel(page_window[2]);
+    pages[3] = new_panel(page_window[3]);
+    pages[4] = new_panel(page_window[4]);
 
-    set_panel_userptr(my_panels[0], my_panels[1]);
-    set_panel_userptr(my_panels[1], my_panels[2]);
-    set_panel_userptr(my_panels[2], my_panels[0]);
+    set_panel_userptr(pages[0], pages[1]);
+    set_panel_userptr(pages[1], pages[2]);
+    set_panel_userptr(pages[2], pages[3]);
+    set_panel_userptr(pages[3], pages[4]);
+    set_panel_userptr(pages[4], pages[0]);
 
     update_panels();
 
-    attron(COLOR_PAIR(4));
-    attroff(COLOR_PAIR(4));
+    attron(COLOR_PAIR(5));
+    attroff(COLOR_PAIR(5));
 
     doupdate();
-    top = my_panels[2];
+    top = pages[2];
 
     while(1)
     {
@@ -103,7 +113,7 @@ int main()
             case 9:
                 top = (PANEL *)panel_userptr(top);
                 top_panel(top);
-                //activate_panels(my_wins, my_panels, top);
+                //activate_panels(page_window, pages, top);
             default:
                 mvprintw(24, 0, "oh hi");
                 refresh();
@@ -126,18 +136,39 @@ int main()
 void init_wins(WINDOW **wins, int n)
 {
     int x, y, i;
-    char label[80];
+    char send[80];
+    char receive[80];
+    char balance[80];
+    char history[80];
+    char quit[80];
     y = 2;
     x = 35;
 
-    for(i = 0; i < n; ++i)
+    wins[0] = newwin(NLINES, NCOLS, y, x);
+    sprintf(send, "SEND", 0);
+    wins[1] = newwin(NLINES, NCOLS, y, x); 
+    sprintf(receive, "RECEIVE", 1);
+    wins[2] = newwin(NLINES, NCOLS, y, x); 
+    sprintf(balance, "BALANCE", 2);
+    wins[3] = newwin(NLINES, NCOLS, y, x); 
+    sprintf(history, "HISTORY", 3);
+    wins[4] = newwin(NLINES, NCOLS, y, x); 
+    sprintf(quit, "QUIT", 4);
+
+    win_show(wins[0], send, 0);
+    win_show(wins[1], receive, 1);
+    win_show(wins[2], balance, 2);
+    win_show(wins[3], history, 3);
+    win_show(wins[4], quit, 4);
+
+    /*for(i = 0; i < n; ++i)
     {
         wins[i] = newwin(NLINES, NCOLS, y, x);
         sprintf(label, "Window Number %d", i + 1);
         win_show(wins[i], label, i + 1);
        // y += 3;
         //x += 7;
-    }
+    }*/
 }
 
 void win_show(WINDOW *win, char *label, int label_color)
@@ -197,7 +228,7 @@ void print_menu(WINDOW *menu_window, int highlight)
     wrefresh(menu_window);
 }
 
-/*void activate_panels(WINDOW *my_wins[3], PANEL *my_panels[3], PANEL *top)
+/*void activate_panels(WINDOW *page_window[3], PANEL *pages[3], PANEL *top)
 {
     int ch;
      
@@ -206,18 +237,18 @@ void print_menu(WINDOW *menu_window, int highlight)
     init_pair(3, COLOR_BLUE, COLOR_BLACK);
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
       
-    init_wins(my_wins, 3);
-    my_panels[0] = new_panel(my_wins[0]);
-    my_panels[1] = new_panel(my_wins[1]);
-    my_panels[2] = new_panel(my_wins[2]);
-    set_panel_userptr(my_panels[0], my_panels[1]);
-    set_panel_userptr(my_panels[1], my_panels[2]);
-    set_panel_userptr(my_panels[2], my_panels[0]);
+    init_wins(page_window, 3);
+    pages[0] = new_panel(page_window[0]);
+    pages[1] = new_panel(page_window[1]);
+    pages[2] = new_panel(page_window[2]);
+    set_panel_userptr(pages[0], pages[1]);
+    set_panel_userptr(pages[1], pages[2]);
+    set_panel_userptr(pages[2], pages[0]);
     update_panels();
     attron(COLOR_PAIR(4));
     attroff(COLOR_PAIR(4));
     doupdate();
-    top = my_panels[2];
+    top = pages[2];
     while((ch = getch()) != KEY_F(1))
     {
         switch(ch)
