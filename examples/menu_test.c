@@ -1,9 +1,14 @@
 #include <stdio.h> 
 #include <ncurses.h>
-#include <menu.h>
+#include <panel.h>  
+#include <string.h>
+
+//#define NLINES 24
+//#define NCOLS 60
 
 int startx = 0;
 int starty = 0;
+
 char *choices[] = 
 {
     "SEND",
@@ -12,9 +17,16 @@ char *choices[] =
     "HISTORY",
     "QUIT",
 };
+/*enum class wallet_menu
+{
+    "SEND",
+    "RECIEVE",
+    "BALANCE",
+    "HISTORY",
+    "QUIT",
+};*/
 
 int n_choices = sizeof(choices) / sizeof(char *);
-void print_menu(WINDOW *menu_window, int highlight);
 
 int main(int argc, char* argv[])
 {
@@ -23,6 +35,8 @@ int main(int argc, char* argv[])
     int highlight = 1;
     int choice = 0;
     int c;
+    int selection;
+
     initscr();
     clear();
     noecho();
@@ -35,13 +49,35 @@ int main(int argc, char* argv[])
 
     refresh();
 
+    while(choice = getch() != 5)
+    {
+        switch(choice)
+        {
+            case 1:
+                //do something
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            case 5:
+                break;
+            default:
+                refresh();
+                break;
+        }
+
+    }
+
     print_menu(menu_window, highlight);
     while(1)
     {
-        c = wgetch(menu_window);
-        switch(c)
+        c = wgetch(menu_window); // takes key input from menu
+        switch(c) // sets key input as switch variable
         {
-            case KEY_UP:
+            case KEY_UP: // if key up is pressed...
                 if(highlight == 1)
                     highlight = n_choices;
                 else
@@ -69,26 +105,5 @@ int main(int argc, char* argv[])
     refresh();
     endwin();                       /* End curses mode                */
     return 0;
-}
-
-void print_menu(WINDOW *menu_window, int highlight)
-{
-    int x, y, i;
-    x = 2;
-    y = 2;
-   // box(menu_window, 0, 0);
-    for(i = 0; i < n_choices; ++i)
-    {
-        if(highlight == i +1)
-        {
-            wattron(menu_window, A_REVERSE);
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
-            wattroff(menu_window, A_REVERSE);
-        }
-        else
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
-        ++y;
-    }
-    wrefresh(menu_window);
 }
 

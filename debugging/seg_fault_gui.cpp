@@ -1,16 +1,27 @@
+#include <signal.h>
+#include <iostream>
+#include <boost/filesystem.hpp>
+#include <boost/stacktrace.hpp>
+#include <boost/stacktrace/safe_dump_to.hpp>
 #include <stdio.h> 
 #include <ncurses.h>
 #include <panel.h>  
 #include <string.h>
 
+// TODO: refactor as ENUM
+// classes for each enum variable i.e. class send{} etc
+
 #define NLINES 18
 #define NCOLS 40
 
-// TODO: refactor as ENUM
-// classes for each enum variable i.e. class send{} etc
-// refactor into object orientated style i.e. isolate objects into classes
-// Object-orientated design: combining data and its operation into context-bound
-// entity (class, struct)
+void signal_handler(int signal_num)
+{
+    std::cout << "Seg fault found\n";
+    std::cout << boost::stacktrace::stacktrace();
+
+    boost::stacktrace::safe_dump_to("/tmp/backtrace.dump");
+    exit(signal_num);
+}
 
 int startx = 0;
 int starty = 0;
@@ -32,9 +43,16 @@ void print_in_middle(WINDOW *win, int starty, int startx, int width, char *strin
 
 int main()
 {
+    {
+        std::ifstream ifs("/tmp/backtrace.dump");
+        boost::stacktrace::stacktrace st = boost::stacktrace::stacktrace::from_dump(ifs);
+        std::cout << "Previous run crashed:\n" << st << std::endl;
+    }
+
     WINDOW *menu_window;
-    WINDOW *page_window[5];
-    PANEL  *pages[5];
+
+    WINDOW *page_window[3];
+    PANEL  *pages[3];
     PANEL  *top;
     int ch;
 
@@ -56,13 +74,15 @@ int main()
 
     print_menu(menu_window, highlight); 
 
+    signal(SIGSEGV, signal_handler);
+
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     init_pair(3, COLOR_BLUE, COLOR_BLACK);
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
     init_pair(5, COLOR_MAGENTA, COLOR_BLACK);
       
-    init_wins(page_window, 5);
+    init_wins(page_window, 3);
 
     pages[0] = new_panel(page_window[0]);
     pages[1] = new_panel(page_window[1]);
@@ -78,16 +98,16 @@ int main()
 
     update_panels();
 
-    attron(COLOR_PAIR(5));
-    attroff(COLOR_PAIR(5));
+    attron(COLOR_PAIR(4));
+    attroff(COLOR_PAIR(4));
 
     doupdate();
     top = pages[2];
-
+    
     while(1)
     {
         c = wgetch(menu_window);
-        switch(c)
+       /* switch(c)
         {
             case KEY_UP:
                 top = (PANEL *)panel_userptr(top);
@@ -118,7 +138,7 @@ int main()
                 mvprintw(24, 0, "oh hi");
                 refresh();
                 break;
-        }
+        }*/
         // ++panel
         update_panels();
         doupdate(); 
@@ -145,23 +165,23 @@ void init_wins(WINDOW **wins, int n)
     x = 35;
 
     wins[0] = newwin(NLINES, NCOLS, y, x);
-    sprintf(send, "SEND", 0);
+    sprintf(send, "SEND", 1);
     wins[1] = newwin(NLINES, NCOLS, y, x); 
-    sprintf(receive, "RECEIVE", 1);
+    sprintf(receive, "RECEIVE", 2);
     wins[2] = newwin(NLINES, NCOLS, y, x); 
-    sprintf(balance, "BALANCE", 2);
+    sprintf(balance, "BALANCE", 3);
     wins[3] = newwin(NLINES, NCOLS, y, x); 
-    sprintf(history, "HISTORY", 3);
+    sprintf(history, "HISTORY", 4);
     wins[4] = newwin(NLINES, NCOLS, y, x); 
-    sprintf(quit, "QUIT", 4);
+    sprintf(quit, "QUIT", 5);
 
-    win_show(wins[0], send, 0);
-    win_show(wins[1], receive, 1);
-    win_show(wins[2], balance, 2);
-    win_show(wins[3], history, 3);
+    win_show(wins[0], send, 1);
+    win_show(wins[1], receive, 2);
+    win_show(wins[2], balance, 3);
+    win_show(wins[3], history, 4);
     win_show(wins[4], quit, 4);
 
-    /*for(i = 0; i < n; ++i)
+   /* for(i = 0; i < n; ++i)
     {
         wins[i] = newwin(NLINES, NCOLS, y, x);
         sprintf(label, "Window Number %d", i + 1);
@@ -238,17 +258,23 @@ void print_menu(WINDOW *menu_window, int highlight)
     init_pair(4, COLOR_CYAN, COLOR_BLACK);
       
     init_wins(page_window, 3);
+
     pages[0] = new_panel(page_window[0]);
     pages[1] = new_panel(page_window[1]);
     pages[2] = new_panel(page_window[2]);
+
     set_panel_userptr(pages[0], pages[1]);
     set_panel_userptr(pages[1], pages[2]);
     set_panel_userptr(pages[2], pages[0]);
+
     update_panels();
+
     attron(COLOR_PAIR(4));
     attroff(COLOR_PAIR(4));
+
     doupdate();
     top = pages[2];
+
     while((ch = getch()) != KEY_F(1))
     {
         switch(ch)

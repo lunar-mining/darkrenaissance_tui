@@ -9,6 +9,7 @@ void print_in_middle(WINDOW *win, int starty, int startx, int width, char *strin
 int main(int argc, char *argv[])
 {
     int row,col;
+    int c;
     char welcome[]="DARK RENAISSANCE WALLET <3";
     initscr();/* Start curses mode            */
     start_color();/* Start color                  */
@@ -22,7 +23,20 @@ int main(int argc, char *argv[])
     mvprintw(0, (col-strlen(welcome)/2), welcome);
     //mvprintw(2, 20, "DARK RENAISSANCE WALLET");
     attroff(COLOR_PAIR(1));
-    getch();
+
+    while(1)
+    {
+        c = wgetch(stdscr);
+        switch(c)
+        {
+            case KEY_ENTER:
+            refresh();
+            break;
+            default:
+            break;
+        }
+        doupdate();
+    }
     endwin();
 }
 
