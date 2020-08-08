@@ -17,6 +17,7 @@ public:
     int n_choices, i, c; 
     int x, y;
     int n_lines, n_columns;
+    int highlight;
     const char *choices[];
 };
 
@@ -24,12 +25,15 @@ menu::menu()
 {
     int n_lines = 3;
     int n_columns = 50;
-    int x = 2;
+    int x = 3;
     int y = 1;
+    int highlight = 1;
+
+    init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
     const char *choices[] = 
     {
-        "SEND",
+        "   SEND",
         "RECEIVE",
         "BALANCE",
         "HISTORY",
@@ -42,9 +46,17 @@ menu::menu()
 
     for (i = 0; i < n_choices; ++i)
     {
-        mvwprintw(menu_window, y, x, choices[i]);
-        x += 10;
+        if (highlight = i + 1)
+        {
+            wattron(menu_window, COLOR_PAIR(1));
+            mvwprintw(menu_window, y, x, choices[i]);
+            wattroff(menu_window, COLOR_PAIR(1));
+        }
+        else
+            mvwprintw(menu_window, y, x, choices[i]);
+            x += 9;
     }
+    
     wrefresh(menu_window);
 }
 
@@ -116,16 +128,14 @@ void pages::show_windows(WINDOW *page_wins, char *label, int label_color)
 {
     int x = 1;
     int y = 1;
-    int highlight;
 
     int startx, starty, height, width, i;
     getbegyx(page_wins, starty, startx);
     getmaxyx(page_wins, height, width);
-    box(page_wins, 0, 0);
+    box(page_wins, 0, 0);      wallet_menu.
     mvwaddch(page_wins, 2, 0, ACS_LTEE);
-    //mvwhline(page_wins, 2, 1, ACS_HLINE, width - 2);
     mvwaddch(page_wins, 2, width - 1, ACS_RTEE);
-    mvwprintw(page_wins, 5, 23, label); // prints labels on window
+    mvwprintw(page_wins, 5, 23, label);
     // TODO: implement page functionality
 }
 
@@ -134,7 +144,6 @@ int main()
     initscr();
     int c;
     
-    int highlight;
     clear();
     noecho();
     cbreak();
@@ -149,12 +158,32 @@ int main()
     
     while (1)
     {
-        c = wgetch(stdscr);
+        c = wgetch(wallet_menu.menu_window);
         switch(c)
         {
-        case 9:
+            case KEY_RIGHT:
             wallet_pages.top_page = (PANEL *)panel_userptr(wallet_pages.top_page);
             top_panel(wallet_pages.top_page);
+            if(wallet_menu.highlight == 1)
+                wallet_menu.highlight = wallet_menu.n_choices;
+            else
+                --wallet_menu.highlight;
+            break;
+            case KEY_LEFT:
+            wallet_pages.top_page = (PANEL *)panel_userptr(wallet_pages.top_page);
+            top_panel(wallet_pages.top_page);
+            if(wallet_menu.highlight == 1)
+                wallet_menu.highlight = wallet_menu.n_choices;
+            else
+                ++wallet_menu.highlight;
+            break;
+            case 9:
+            wallet_pages.top_page = (PANEL *)panel_userptr(wallet_pages.top_page);
+            top_panel(wallet_pages.top_page);
+            if(wallet_menu.highlight == wallet_menu.n_choices)
+                wallet_menu.highlight == 1;
+            else 
+                ++ wallet_menu.highlight;
         default:
             refresh();
             break;
@@ -168,25 +197,4 @@ int main()
     endwin();
     return 0;
 }
-
-/*void menu::print_menu(WINDOW *menu_window, int highlight)
-{
-    int x, y, i;
-    x = 2;
-    y = 2;
-    box(menu_window, 0, 0);
-    for(i = 0; i < n_choices; ++i)
-    {
-        if(highlight == i +1)
-        {
-            wattron(menu_window, A_REVERSE);
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
-            wattroff(menu_window, A_REVERSE);
-        }
-        else
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
-        ++y;
-    }
-    wrefresh(menu_window);
-}*/
 
