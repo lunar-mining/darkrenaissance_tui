@@ -4,32 +4,49 @@
 #include <panel.h>
 #include <menu.h>
 
+// TODO: make box into simple rectangle. make new menu to cycle through pages
+
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof(a[0]))
+
 class menu
 {
 public:
     menu();
-    
-    ITEM **menu_items;
-    MENU *wallet_menu;
+    WINDOW *menu_window;
 
-    // menu scroll
+    int n_choices, i, c; 
+    int x, y;
+    int n_lines, n_columns;
+    const char *choices[];
 };
 
 menu::menu()
 {
-    wallet_menu = new_menu((ITEM **)menu_items);
-    post_menu(wallet_menu);
-    refresh();
-}
+    int n_lines = 3;
+    int n_columns = 50;
+    int x = 2;
+    int y = 1;
 
-enum class options
-{
-    Send,
-    Receive,
-    Balance,
-    History,
-    Quit,
-};
+    const char *choices[] = 
+    {
+        "SEND",
+        "RECEIVE",
+        "BALANCE",
+        "HISTORY",
+        "QUIT",
+    };
+
+    int n_choices = sizeof(choices) / sizeof(char *);
+    menu_window = newwin(n_lines, n_columns, y, 15.5);
+    box(menu_window, 0, 0);
+
+    for (i = 0; i < n_choices; ++i)
+    {
+        mvwprintw(menu_window, y, x, choices[i]);
+        x += 10;
+    }
+    wrefresh(menu_window);
+}
 
 class pages
 {
@@ -73,19 +90,20 @@ void pages::create_windows(WINDOW **page_wins, int n)
     char history[80];
     char quit[80];
     //TODO: Calculate x and y according to screen size
-    y = 2;
+    y = 4;
     x = 15.5;
 
+    // rows, columns, y, x
     page_wins[0] = newwin(20, 50, y, x);
-    sprintf(send, "  SEND", 0);
+    sprintf(send, "*", 0);
     page_wins[1] = newwin(20, 50, y, x); 
-    sprintf(receive, "RECEIVE", 1);
+    sprintf(receive, "o", 1);
     page_wins[2] = newwin(20, 50, y, x); 
-    sprintf(balance, "BALANCE", 2);
+    sprintf(balance, "<3", 2);
     page_wins[3] = newwin(20, 50, y, x); 
-    sprintf(history, "HISTORY", 3);
+    sprintf(history, "?!", 3);
     page_wins[4] = newwin(20, 50, y, x); 
-    sprintf(quit, "  QUIT", 4);
+    sprintf(quit, ":D", 4);
 
     show_windows(page_wins[0], send, 1);
     show_windows(page_wins[1], receive, 2);
@@ -105,9 +123,10 @@ void pages::show_windows(WINDOW *page_wins, char *label, int label_color)
     getmaxyx(page_wins, height, width);
     box(page_wins, 0, 0);
     mvwaddch(page_wins, 2, 0, ACS_LTEE);
-    mvwhline(page_wins, 2, 1, ACS_HLINE, width - 2);
+    //mvwhline(page_wins, 2, 1, ACS_HLINE, width - 2);
     mvwaddch(page_wins, 2, width - 1, ACS_RTEE);
-    mvwprintw(page_wins, x, y, label);
+    mvwprintw(page_wins, 5, 23, label); // prints labels on window
+    // TODO: implement page functionality
 }
 
 int main()
@@ -115,21 +134,23 @@ int main()
     initscr();
     int c;
     
+    int highlight;
     clear();
     noecho();
     cbreak();
 
     pages wallet_pages;
-    //menu wallet_menu;
+    menu wallet_menu;
 
     keypad(stdscr, TRUE);
     curs_set(0);
     start_color();
+    refresh();
     
     while (1)
     {
         c = wgetch(stdscr);
-        /*switch(c)
+        switch(c)
         {
         case 9:
             wallet_pages.top_page = (PANEL *)panel_userptr(wallet_pages.top_page);
@@ -139,7 +160,7 @@ int main()
             break;
         }
         update_panels();
-        doupdate();*/
+        doupdate();
     }
 
     clrtoeol();
@@ -147,4 +168,25 @@ int main()
     endwin();
     return 0;
 }
+
+/*void menu::print_menu(WINDOW *menu_window, int highlight)
+{
+    int x, y, i;
+    x = 2;
+    y = 2;
+    box(menu_window, 0, 0);
+    for(i = 0; i < n_choices; ++i)
+    {
+        if(highlight == i +1)
+        {
+            wattron(menu_window, A_REVERSE);
+            mvwprintw(menu_window, y, x, "%s", choices[i]);
+            wattroff(menu_window, A_REVERSE);
+        }
+        else
+            mvwprintw(menu_window, y, x, "%s", choices[i]);
+        ++y;
+    }
+    wrefresh(menu_window);
+}*/
 

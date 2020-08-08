@@ -10,7 +10,7 @@
 int startx = 0;
 int starty = 0;     
 
-//void print_menu(WINDOW *menu_window, int highlight);
+void print_menu(WINDOW *menu_window, int highlight);
 void init_wins(WINDOW **wins, int n);
 void win_show(WINDOW *win, char *label, int label_color);
 void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color);
@@ -39,7 +39,7 @@ int main()
     start_color();
     refresh();
 
-    //print_menu(menu_window, highlight); 
+    print_menu(menu_window, highlight); 
 
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
@@ -148,7 +148,7 @@ void win_show(WINDOW *win, char *label, int label_color)
     }*/
 }
 
-/*void print_menu(WINDOW *menu_window, int highlight)
+void print_menu(WINDOW *menu_window, int highlight)
 {
     int x, y, i;
     x = 3;
@@ -167,7 +167,7 @@ void win_show(WINDOW *win, char *label, int label_color)
         ++y;
     }
     wrefresh(menu_window);
-}*/
+}
 /*void print_in_middle(WINDOW *win, int starty, int startx, int width, char *string, chtype color)
 {
     int length, x, y, i;
