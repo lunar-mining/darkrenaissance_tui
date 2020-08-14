@@ -113,7 +113,11 @@ int main()
             case 9:
                 top = (PANEL *)panel_userptr(top);
                 top_panel(top);
-                //activate_panels(page_window, pages, top);
+                if(highlight == 1)
+                    highlight = n_choices;
+                else
+                    --highlight;
+                break;
             default:
                 mvprintw(24, 0, "oh hi");
                 refresh();
