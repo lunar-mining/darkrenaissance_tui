@@ -31,7 +31,7 @@ public:
 
 login::login()
 {
-    const char *welcome_msg = "DARK RENAISSANCE WALLET <3";
+    const char *welcome_msg = "WELCOME TO THE DARK RENAISSANCE";
     const char *enter_msg = "PRESS ENTER";
     const char *heart = "<3";
 
@@ -40,14 +40,23 @@ login::login()
     login_panel = new_panel(login_window);
 
     init_pair(1, COLOR_CYAN, COLOR_BLACK);
-    attron(COLOR_PAIR(1));
+    init_pair(2, COLOR_MAGENTA, COLOR_BLACK);
+    init_pair(3, COLOR_BLUE, COLOR_WHITE);
 
+   // wattron(login_window, COLOR_PAIR(1));
     print_in_middle(login_window, LINES / 2, 0, 0, enter_msg);
+    //wattroff(login_window, COLOR_PAIR(1));
+    wattron(login_window, COLOR_PAIR(2));
 
+    mvwprintw(login_window, 3, 38, heart);
+    mvwchgat(login_window, 3, 10, -1, A_BLINK, 2, NULL);
+
+    wattron(login_window, COLOR_PAIR(3));
     getmaxyx(login_window, row, col);
-    mvwprintw(login_window, 0, 27, welcome_msg);
+    mvwprintw(login_window, 2, 25, welcome_msg);
+    mvwchgat(login_window, 2, 0, -1, A_REVERSE, 3, NULL);
 
-    attroff(COLOR_PAIR(1));
+    wattroff(login_window, COLOR_PAIR(3));
     enter_press();
 }
 
@@ -68,7 +77,7 @@ void login::print_in_middle(WINDOW *win, int starty, int startx, int width, cons
     temp = (width - length)/ 2;
     x = startx + (int)temp;
     mvwprintw(win, y, x, "%s", string);
-    mvwchgat(win, y, x, -1, A_BLINK, 1, NULL);
+    //mvwchgat(win, y, x, -1, A_BLINK, 1, NULL);
     refresh();
 }       
 
@@ -132,7 +141,7 @@ menu::menu()
     int y = 1;
     int highlight = 1;
 
-    init_pair(1, COLOR_CYAN, COLOR_BLACK);
+   // init_pair(1, COLOR_CYAN, COLOR_BLACK);
 
     const char *choices[] = 
     {
