@@ -89,7 +89,7 @@ int main()
         c = wgetch(menu_window);
         switch(c)
         {
-            case KEY_UP:
+            /*case KEY_UP:
                 top = (PANEL *)panel_userptr(top);
                 top_panel(top);
                 if(highlight == 1)
@@ -109,7 +109,7 @@ int main()
                 top = (PANEL *)panel_userptr(top);
                 top_panel(top);
                 choice = highlight;
-                break;
+                break;*/
             case 9:
                 top = (PANEL *)panel_userptr(top);
                 top_panel(top);
