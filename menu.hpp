@@ -15,6 +15,7 @@ public:
     int x, y;
     int n_lines, n_columns;
     int highlight;
+    const char *choices[];
     void print_menu(WINDOW *menu_window, int highlight);
     void activate();
 };

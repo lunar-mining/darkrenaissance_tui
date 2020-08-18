@@ -28,11 +28,12 @@ menu::menu()
     };
 
     int n_choices = sizeof(choices) / sizeof(char *);
+
     for (i = 0; i < n_choices; ++i)
     {
         if (highlight = i +1)
         {
-            mvwprintw(menu_window, 0, 0, "highlight activated");
+            //mvwprintw(menu_window, 0, 0, "highlight activated");
             wattron(menu_window, COLOR_PAIR(1));
             mvwprintw(menu_window, y, x, choices[i]);
             wattroff(menu_window, COLOR_PAIR(1));
@@ -47,41 +48,18 @@ menu::menu()
 
 void menu::print_menu(WINDOW *menu_window, int highlight)
 {    
-   /* const char *choices[] = 
-    {
-        "   SEND",
-        "RECEIVE",
-        "BALANCE",
-        "HISTORY",
-        "QUIT",
-    };
-
-    int n_choices = sizeof(choices) / sizeof(char *);
-    for (i = 0; i < n_choices; ++i)
-    {
-        if (highlight = i +1)
-        {
-            mvwprintw(menu_window, 0, 0, "highlight activated");
-            wattron(menu_window, COLOR_PAIR(1));
-            mvwprintw(menu_window, y, x, choices[i]);
-            wattroff(menu_window, COLOR_PAIR(1));
-        }
-        else
-            mvwprintw(menu_window, y, x, choices[i]);
-        x += 9;
-    }
-    wrefresh(menu_window);*/
 }
 
 void menu::activate()
 {
+    menu menu;
     pages pages;
     int choice = 0;
 
     while (1)
     {
         c = wgetch(menu_window);
-        /*switch(c)
+        switch(c)
         {
             case KEY_LEFT:
                 mvwprintw(menu_window, 0, 0, "key left pressed");
@@ -115,9 +93,9 @@ void menu::activate()
         }
         update_panels();
         doupdate();
-        print_menu(menu_window, highlight);
+        //print_menu(menu_window, highlight);
         if (choice != 0)
-            break;*/
+            break;
     }
     clrtoeol();
     refresh();    
