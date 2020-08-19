@@ -222,11 +222,11 @@ void print_menu(WINDOW *menu_window, int highlight)
         if(highlight == i +1)
         {
             wattron(menu_window, A_REVERSE);
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
+            mvwprintw(menu_window, y, x,  choices[i]);
             wattroff(menu_window, A_REVERSE);
         }
         else
-            mvwprintw(menu_window, y, x, "%s", choices[i]);
+            mvwprintw(menu_window, y, x,  choices[i]);
         ++y;
     }
     wrefresh(menu_window);
