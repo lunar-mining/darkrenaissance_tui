@@ -67,7 +67,7 @@ void menu::activate()
     menu menu;
     pages pages;
     int choice = 0;
-    int highlight = 5;
+    int highlight = 0;
 
     while (1)
     {
